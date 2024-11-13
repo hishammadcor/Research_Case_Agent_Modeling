@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "research-case-agent-modeling"
+version = "0.1.0"
+description = ""
+authors = ["Hisham Madcor <hisham3madcor@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+pandas = "^2.2.3"
+torch = "^2.5.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
