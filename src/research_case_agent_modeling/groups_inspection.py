@@ -7,8 +7,8 @@ data_path = "/home/rocdam/Research_Case_Agent_Modeling/data/1_preprocess/8_df_da
 data = pd.read_csv(data_path, delimiter=',')
 
 
-religion = ['F7lA1_2.0', 'F7lA1_3.0', 'F7lA1_1.0', 'F7lA1_4.0']
-ethnicity = ['F7n_2.0', 'F7n_1.0', 'F7n_8.0', 'F7n_4.0']
+religion = ['F7lA1_1.0', 'F7lA1_2.0', 'F7lA1_3.0', 'F7lA1_4.0']
+ethnicity = ['F7n_1.0', 'F7n_2.0', 'F7n_4.0', 'F7n_8.0']
 
 correlation_matrix = pd.DataFrame(index=religion, columns=ethnicity)
 
