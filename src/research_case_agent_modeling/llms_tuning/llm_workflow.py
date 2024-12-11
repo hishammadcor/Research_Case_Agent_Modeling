@@ -32,7 +32,7 @@ class CustomLLM:
             
             # Make the API call
             response = requests.post(
-                f"{self.api_url}/prompt",
+                self.api_url,
                 json={
                     'model': self.model,
                     'prompt': prompt,
@@ -45,40 +45,3 @@ class CustomLLM:
         except Exception as e:
             logging.warning(f"Error occurred during LLM call: {e}")
             return "Error occurred during LLM call"
-
-    def save_model(self, model_name: str, group_name: str):
-        """
-        Save the fine-tuned model using the API.
-        """
-        try:
-            response = requests.post(
-                f"{self.api_url}/models/",
-                json={
-                    "name": model_name,
-                    "type": "instruct",
-                    "params": "updated",
-                    "author": "A1",
-                    "origin": "fine-tuning process",
-                    "description": f"Instruction-tuned model for {group_name}"
-                }
-            )
-            response.raise_for_status()
-            print(f"Model '{model_name}' saved successfully.")
-        except Exception as e:
-            logging.error(f"Failed to save model: {e}")
-
-    def load_saved_model(self, model_name: str):
-        """
-        Load a saved model for further usage.
-        """
-        try:
-            response = requests.get(f"{self.api_url}/models/")
-            response.raise_for_status()
-            models = response.json()
-            for model in models:
-                if model["name"] == model_name:
-                    print(f"Model '{model_name}' loaded successfully.")
-                    return model 
-            print(f"Model '{model_name}' not found.")
-        except Exception as e:
-            logging.error(f"Failed to load model: {e}")
