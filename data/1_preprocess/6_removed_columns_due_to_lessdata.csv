@@ -1,5 +1,30 @@
 Custom_variable_name,Text
-F5A14_1,Private television stations
-F5A15_1,Classic news sites on the Internet (e.g. nytimes.com or washingtonpost.com)
-F5bA2_1,"Social media (Facebook, Instagram, Youtube, Twitter, TikTok, etc.)"
-F7mA1,To which of the following occupational groups do you belong?
+F3A23_1,"Please indicate how much you agree or disagree with the statement: ""Hamas is supported by the majority of Palestinians in Gaza."""
+F3A24_1,"Please indicate how much you agree or disagree with the statement: ""Israel is a legitimate state."""
+F3A25_1,"Please indicate how much you agree or disagree with the statement: ""There should be a Palestinian state."""
+F3A26_1,"Please indicate how much you agree or disagree with the statement: ""When it comes to Israeli politics, I can easily understand why people dislike Jews."""
+F3A27_1,"Please indicate how much you agree or disagree with the statement: ""Antisemitism in the United States poses a threat to Jews."""
+F3A28_1,"Please indicate how much you agree or disagree with the statement: ""The Israeli perspective dominates reporting in the American media."""
+F3A29_1,"Please indicate how much you agree or disagree with the statement: ""Hamas is a terrorist organization"""
+F3A30_1,"Please indicate how much you agree or disagree with the statement: ""In the current public debate on the Arab-Israeli conflict, arguments are greatly exaggerated and simplified."""
+F3A31_1,"Please indicate how much you agree or disagree with the statement: ""Under certain circumstances, a dictatorship is the better form of government in the national interest."""
+F3A32_1,"Please indicate how much you agree or disagree with the statement: ""We should finally regain the courage to have a strong sense of national identity."""
+F3A33_1,"Please indicate how much you agree or disagree with the statement: ""The practice of the Islamic faith in the United States should be restricted."""
+F3A34_1,"Please indicate how much you agree or disagree with the statement: ""Muslims do not fit into the American Society"""
+F3A35_1,"Please indicate how much you agree or disagree with the statement: ""Jews do not fit into the American Society"""
+F3A36_1,"Please indicate how much you agree or disagree with the statement: ""In the United States, a critical attitude towards Israel is considered socially unacceptable."""
+F3B1,How many Jews live in the United States?
+F3B2,How many Muslims live in the United States?
+F3B3,"For Jews, the greatest threat comes from the following part of society:"
+F3B_Hamas,"There is a debate on which role different countries play in the Arab-Israeli conflict war. Please indicate whether you think ""Hamas"" is more likely that they contribute to the resolution of the Arab-Israeli conflict or its escalation. "
+F3B_Israel,"There is a debate on which role different countries play in the Arab-Israeli conflict war. Please indicate whether you think ""Israel"" is more likely that they contribute to the resolution of the Arab-Israeli conflict or its escalation. "
+F3B_Deutschland,"There is a debate on which role different countries play in the Arab-Israeli conflict war. Please indicate whether you think ""Germany"" is more likely that they contribute to the resolution of the Arab-Israeli conflict or its escalation. "
+F3B_USA,"There is a debate on which role different countries play in the Arab-Israeli conflict war. Please indicate whether you think ""USA"" is more likely that they contribute to the resolution of the Arab-Israeli conflict or its escalation. "
+F3B_UN,"There is a debate on which role different countries play in the Arab-Israeli conflict war. Please indicate whether you think ""United Nations"" is more likely that they contribute to the resolution of the Arab-Israeli conflict or its escalation. "
+F3B_Iran,"There is a debate on which role different countries play in the Arab-Israeli conflict war. Please indicate whether you think ""Iran"" is more likely that they contribute to the resolution of the Arab-Israeli conflict or its escalation. "
+F3B_Katar,"There is a debate on which role different countries play in the Arab-Israeli conflict war. Please indicate whether you think ""Qatar"" is more likely that they contribute to the resolution of the Arab-Israeli conflict or its escalation. "
+F5A14_1,How much trust do you have in the institution: Private television stations? 
+F5A15_1,How much trust do you have in the institution: Classic news sites on the Internet (e.g. nytimes.com or washingtonpost.com)? 
+F5bA2_1,"How much do you access: Social media (Facebook, Instagram, Youtube, Twitter, TikTok, etc.)?"
+F5cA1_1,"For the statement, please indicate how much you agree or disagree with it. ""Artificial intelligence has a negative impact on content on social media."""
+F5cA2_1,"For the statement, please indicate how much you agree or disagree with it. ""I encounter disinformation in my everyday life."""
