@@ -4,6 +4,7 @@ import pandas as pd
 from llms_tuning.llm_workflow import CustomLLM
 from llms_tuning.save_generated_response import save_responses_to_csv
 from llms_tuning.load_personas import load_personas, get_persona_by_group
+from Evaluations.eval import evaluate_responses 
 
 csv_file_path = "data/0_Reformated_SOSEC_Code-book_US_November_Reformulated_Questions_For_Dict.csv"
 json_file_path = 'data/2_personas/LLM_persona_prompts.json'
@@ -22,13 +23,13 @@ if not selected_persona:
     print(f"No persona found for the group: {group_name}")
     sys.exit(1)
 
-print(f"Group: {selected_persona['Group']}")
+print(f"Group: {group_name}")
 print(f"Persona Prompt: {selected_persona['Persona Prompt']}")
 
 persona = selected_persona['Persona Prompt']
 responses = {}
 
-llm_responses_file = f"data/3_responces/llm_responses_{selected_persona['Group']}.csv"
+llm_responses_file = f"data/3_responces/llm_responses_{group_name}.csv"
 
 # Load existing responses if exist
 if os.path.exists(llm_responses_file):
@@ -57,3 +58,15 @@ for idx, variable_name in enumerate(llm.prompt_data.keys(), start=1):
         print(f"Responses saved incrementally to {llm_responses_file} (Processed {idx}/{len(llm.prompt_data)})")
 
 print(f"All responses saved to {llm_responses_file}")
+
+
+# Evaluation
+
+participant_file = 'data/9_processed_data_for_personas_Format_2.csv'
+model_file = f'data/3_responces/llm_responses_{group_name}.csv'
+
+metrics = evaluate_responses(participant_file, model_file)
+
+print(f"Accuracy: {metrics['accuracy']:.2f}%")
+print(f"Weighted Alignment: {metrics['weighted_alignment']:.2f}%")
+print(f"Rank Correlation (Kendall's Tau): {metrics['rank_correlation']:.2f}")
