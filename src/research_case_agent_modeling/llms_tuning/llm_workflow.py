@@ -26,22 +26,22 @@ class CustomLLM:
         """
         Generates a response from the LLM using a specific variable's prompt.
         """
-        try:
-            # Generate the prompt
-            prompt = self.generate_prompt(variable_name)
-            
-            # Make the API call
-            response = requests.post(
-                self.api_url,
-                json={
-                    'model': self.model,
-                    'prompt': prompt,
-                    'system': persona
-                }
-            )
-            response.raise_for_status()
-            result = response.json().get('response', '').strip()
-            return result
-        except Exception as e:
-            logging.warning(f"Error occurred during LLM call: {e}")
-            return "Error occurred during LLM call"
+        while True:
+            try:
+                # Generate the prompt
+                prompt = self.generate_prompt(variable_name)
+                
+                # Make the API call
+                response = requests.post(
+                    self.api_url,
+                    json={
+                        'model': self.model,
+                        'prompt': prompt,
+                        'system': persona
+                    }
+                )
+                response.raise_for_status()
+                result = response.json().get('response', '').strip()
+                return result
+            except Exception as e:
+                logging.warning(f"Error occurred during LLM call: {e}. Retrying....")
