@@ -14,33 +14,46 @@ def load_personas(json_file_path):
         data = json.load(file)
     return data
 
-def get_persona_by_group(personas, group_name):
+def get_persona_by_group(personas, start_group=None, end_group=None):
     """
-    Retrieves a specific persona by its group name.
-    
+    Retrieves personas filtered by start and end groups.
+
     Args:
         personas (list): List of persona dictionaries.
-        group_name (str): The group name to search for.
-    
-    Returns:
-        dict: The persona dictionary for the specified group, or None if not found.
-    """
-    for persona in personas:
-        if persona.get("Group") == group_name:
-            return persona
-    return None
+        start_group (str, optional): The group name to start from.
+        end_group (str, optional): The group name to end with.
 
-# Example usage
+    Returns:
+        list: A list of personas filtered by the specified range.
+    """
+    if start_group:
+        try:
+            start_index = next(i for i, p in enumerate(personas) if p["Group"] == start_group)
+        except StopIteration:
+            raise ValueError(f"Starting persona '{start_group}' not found.")
+    else:
+        start_index = 0
+
+    if end_group:
+        try:
+            end_index = next(i for i, p in enumerate(personas) if p["Group"] == end_group) + 1
+        except StopIteration:
+            raise ValueError(f"Ending persona '{end_group}' not found.")
+    else:
+        end_index = len(personas)
+
+    return personas[start_index:end_index]
+
 if __name__ == "__main__":
     json_file_path = 'data/2_personas/LLM_persona_prompts.json'
     personas = load_personas(json_file_path)
     
-    # Choose a specific group
-    group_name = "Christian Protestant"  # Replace with the desired group name
-    selected_persona = get_persona_by_group(personas, group_name)
-    
-    if selected_persona:
-        print(f"Group: {selected_persona['Group']}")
-        print(f"Persona Prompt: {selected_persona['Persona Prompt']}")
-    else:
-        print(f"No persona found for the group: {group_name}")
+    start_group = input("Enter the starting persona group (or press Enter to start from the first): ").strip()
+    end_group = input("Enter the ending persona group (or press Enter to include all remaining): ").strip()
+
+
+    filtered_personas = get_persona_by_group(personas, start_group, end_group)
+
+    for persona in filtered_personas:
+        print(f"Group: {persona['Group']}")
+        print(f"Persona Prompt: {persona['Persona Prompt']}\n")
