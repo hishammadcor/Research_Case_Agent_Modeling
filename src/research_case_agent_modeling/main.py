@@ -25,7 +25,7 @@ except ValueError as e:
     sys.exit(1)
 
 # Set the number of runs
-num_runs = 100 
+num_runs = 50
 
 responses_file_dir = "data/3_responces/"
 os.makedirs(responses_file_dir, exist_ok=True)
