@@ -25,7 +25,7 @@ except ValueError as e:
     sys.exit(1)
 
 # Set the number of runs
-num_runs = 100 
+num_runs = 50 
 
 responses_file_dir = "data/3_responces/"
 os.makedirs(responses_file_dir, exist_ok=True)
@@ -88,7 +88,7 @@ for persona_data in filtered_personas:
             if idx % 10 == 0 or idx == len(llm.prompt_data):
                 all_run_responses[run_key] = run_responses
                 save_responses_to_json(all_run_responses, run_file_name)
-                print(f"Responses saved incrementally to {run_file_name} (Processed {idx}/{len(llm.prompt_data)})")
+                print(f"Responses saved incrementally to {run_file_name} (Processed {idx}/{len(llm.prompt_data)}, {run_number}/{num_runs})")
 
         # Store the responses for the current run
         all_run_responses[run_key] = run_responses
