@@ -14,14 +14,11 @@ def error_analysis_and_plot(reference_file_path, comparison_file_paths, output_p
     Returns:
         None
     """
-    # Load the reference file
     reference_data = pd.read_csv(reference_file_path)
 
-    # Initialize a DataFrame to store differences
     differences = pd.DataFrame()
     differences['Variable'] = reference_data['Variable']
 
-    # Calculate differences for each comparison file
     for file_path in comparison_file_paths:
         comparison_data = pd.read_csv(file_path)
 
@@ -29,7 +26,6 @@ def error_analysis_and_plot(reference_file_path, comparison_file_paths, output_p
         if not all(reference_data['Variable'] == comparison_data['Variable']):
             raise ValueError("Variable names do not match between reference and comparison files.")
 
-        # Calculate differences
         file_name = file_path.split('/')[-1]
         differences[file_name] = reference_data['Standard_Deviation'] - comparison_data['Standard_Deviation']
 
