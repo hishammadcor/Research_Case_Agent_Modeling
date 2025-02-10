@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-def error_analysis_and_plot(groups: list):
+def error_analysis_and_plot(groups: list, mean: False):
     """
     Perform error analysis by calculating the difference in standard deviations and mean between the survey file
     and comparison files for each column and plot the results.
@@ -37,24 +37,43 @@ def error_analysis_and_plot(groups: list):
         std_differences[group] = reference_data['Standard_Deviation'] - comparison_data['Standard_Deviation']
         mean_differences[group] = reference_data['Mean'] - comparison_data['Mean']
 
-        output_plot_path = f'../Research_Case_Agent_Modeling/docs/plots/std_mean_diff/standard_deviation_and_mean_differences_{group}.png'
 
+        if mean:
+            output_plot_path = f'../Research_Case_Agent_Modeling/docs/plots/std_mean_diff/standard_deviation_and_mean_differences_{group}.png'
         # Plot differences
-        plt.figure(figsize=(20, 6))
-        for col in std_differences.columns[1:]:
-            plt.plot(std_differences['Variable'], std_differences[col], linestyle='-', marker='o', label=f'Std Diff - {col}')
+            plt.figure(figsize=(20, 6))
+            for col in std_differences.columns[1:]:
+                plt.plot(std_differences['Variable'], std_differences[col], linestyle='-', marker='o', label=f'Std Diff - {col}')
 
-        for col in mean_differences.columns[1:]:
-            plt.plot(mean_differences['Variable'], mean_differences[col], linestyle='--', marker='x', label=f'Mean Diff - {col}')
+            for col in mean_differences.columns[1:]:
+                plt.plot(mean_differences['Variable'], mean_differences[col], linestyle='--', marker='x', label=f'Mean Diff - {col}')
 
-        plt.title(f'Differences between Standard Deviation and Mean for {group}')
-        plt.xlabel('Variables')
-        plt.ylabel('Differences')
-        plt.xticks(rotation=90)
-        plt.legend()
-        plt.tight_layout()
-        plt.savefig(output_plot_path)
-        plt.show()
+            plt.title(f'Differences between Standard Deviation and Mean for {group}')
+            plt.xlabel('Variables')
+            plt.ylabel('Differences')
+            plt.xticks(rotation=90)
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(output_plot_path)
+            plt.show()
+
+        else: 
+            output_plot_path = f'../Research_Case_Agent_Modeling/docs/plots/std_diff/standard_deviation_differences_{group}.png'
+        # Plot differences
+            plt.figure(figsize=(20, 6))
+            for col in std_differences.columns[1:]:
+                plt.plot(std_differences['Variable'], std_differences[col], linestyle='-', marker='o', label=f'Std Diff - {col}')
+
+
+            plt.title(f'Differences between Standard Deviations for {group}')
+            plt.xlabel('Variables')
+            plt.ylabel('Differences')
+            plt.xticks(rotation=90)
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(output_plot_path)
+            plt.show()
+
 
 groups = [
     "Christian_Catholic", "Christian_Protestant", "Jewish", "Orthodox_Christian",
@@ -64,4 +83,4 @@ groups = [
     "Orthodox_Christian_Hawaiian_Centrist", "Christian_Catholic_Asian_Left"
 ]
 
-error_analysis_and_plot(groups)
+error_analysis_and_plot(groups, False)

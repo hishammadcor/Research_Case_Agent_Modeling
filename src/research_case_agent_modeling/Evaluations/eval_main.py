@@ -287,3 +287,97 @@ def box_plot_survey(file_path, excluded_questions=None, group_conditions=None):
         plt.tight_layout()
         plt.savefig(f"../Research_Case_Agent_Modeling/docs/plots/Box_plot_survey/boxplot_mean_curve_{group_name}_survey_data.png")
         plt.show()
+
+
+def combined_box_plot(questions_file_path, survey_file_path, excluded_questions=None, num_runs=50, group_conditions=None, specific_questions=None, mean=False, combined=False):
+    """
+    Combines the model response and survey data into a single box plot with an overlaid mean curve.
+    Also supports generating a box plot for specific questions.
+
+    Parameters:
+        questions_file_path (str): Path to the CSV file containing questions.
+        survey_file_path (str): Path to the CSV file containing survey responses.
+        model_responses_file_path (str): Path to the JSON file containing model responses.
+        excluded_questions (list): List of questions to exclude from the analysis.
+        num_runs (int): Number of runs for the model.
+        group_conditions (dict): Dictionary mapping group names to filtering conditions for survey data.
+        specific_questions (list): Specific questions to plot separately.
+
+    Returns:
+        None
+    """
+
+    questions_df = pd.read_csv(questions_file_path)
+    all_questions = questions_df.columns.tolist()
+
+    if excluded_questions:
+        included_questions = [q for q in all_questions if q not in excluded_questions]
+    else:
+        included_questions = all_questions
+
+    survey_data = pd.read_csv(survey_file_path)
+    survey_data = survey_data[included_questions]
+ 
+    for group_name, condition in group_conditions.items():
+        group_data = survey_data[condition(survey_data)]
+        group_numeric = group_data.apply(pd.to_numeric, errors='coerce').dropna(axis=1, how='all')
+
+        model_responses_file_path = f'../Research_Case_Agent_Modeling/data/3_responces/{group_name}_{num_runs}_LLM_Output.json'
+        with open(model_responses_file_path, 'r') as f:
+            json_data = json.load(f)
+
+        model_data = pd.DataFrame(json_data).loc[included_questions].map(extract_numerical_value).dropna()
+
+        if combined:
+            plt.figure(figsize=(30, 20))
+            
+            sns.boxplot(data=group_numeric, whis=1.5, width=0.5, boxprops=dict(alpha=0.6), label=f'Survey {group_name}')
+
+            sns.boxplot(data=model_data.T, whis=1.5, width=0.5, boxprops=dict(alpha=0.6), label=f'Model {group_name} ({num_runs} runs)')
+
+            # Overlay mean curves
+            if mean:
+                survey_means = group_numeric.mean()
+                model_means = model_data.mean()
+
+    
+                plt.plot(survey_means.index, survey_means.values, linestyle='-', marker='o', label=f'{group_name} Survey Mean')
+
+                plt.plot(model_means.index, model_means.values, linestyle='-', marker='x', color='red', label='Model Mean')
+
+                plt.xticks(rotation=90)
+                plt.title(f'Combined Box Plot of Model and Survey Responses with mean curve for {group_name}')
+                plt.xlabel('Questions')
+                plt.ylabel('Response Values')
+                plt.legend()
+                plt.tight_layout()
+                plt.savefig(f'../Research_Case_Agent_Modeling/docs/plots/combined_box_plot_mean/Combined_box_plot_with_mean_for_{group_name}.png')
+                plt.show()
+            else:
+
+                plt.xticks(rotation=90)
+                plt.title(f'Combined Box Plot of Model and Survey Responses for {group_name}')
+                plt.xlabel('Questions')
+                plt.ylabel('Response Values')
+                plt.legend()
+                plt.tight_layout()
+                plt.savefig(f'../Research_Case_Agent_Modeling/docs/plots/combined_box_plot/Combined_box_plot_for_{group_name}.png')
+                plt.show()
+
+        if specific_questions:
+            for question in specific_questions:
+                plt.figure(figsize=(20, 6))
+
+                if question in survey_data.columns:
+                    sns.boxplot(data=group_numeric[question], whis=1.5, width=0.5, boxprops=dict(alpha=0.6), color='purple', label=f'Survey ({group_name})')
+
+                if question in model_data.index:
+                    sns.boxplot(data=model_data.loc[[question]].T, whis=1.5, width=0.5, boxprops=dict(alpha=0.6), color='orange', label=f'Model {group_name} ({num_runs} runs)')
+ 
+                plt.title(f'{group_name} Box Plot for Question: {question}')
+                plt.xlabel('Responses')
+                plt.ylabel('Values')
+                plt.legend()
+                plt.tight_layout()
+                plt.savefig(f'../Research_Case_Agent_Modeling/docs/plots/Box_plot_specific_questions/{group_name}_Specific_box_plot_{question}.png')
+                plt.show()
