@@ -1,104 +1,14 @@
 import re
 import json
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy.stats import kendalltau
-
-def calculate_accuracy(participant_data, model_responses):
-    """
-    Calculates accuracy as the percentage of model responses matching the most common participant response.
-    """
-    accuracy = 0
-    total_questions = len(model_responses)
-
-    for _, row in model_responses.iterrows():
-        question = row['Question_Tag']
-        group = "Christian Protestant"  # Group hardcoded based on evaluation context
-        model_response = row['Response']
-
-        # Filter participant data for the same group and question
-        group_data = participant_data[(participant_data['Group'] == group) & 
-                                      (participant_data['Custom_variable_name'] == question)]
-
-        # Get most common response
-        if not group_data.empty:
-            most_common_response = group_data['Response'].mode()[0]
-            if model_response == most_common_response:
-                accuracy += 1
-
-    return (accuracy / total_questions) * 100
-
-def calculate_weighted_alignment(participant_data, model_responses):
-    """
-    Calculates the weighted alignment score based on participant response frequencies.
-    """
-    total_score = 0
-    total_questions = len(model_responses)
-
-    for _, row in model_responses.iterrows():
-        question = row['Question_Tag']
-        group = "Christian Protestant"
-        model_response = row['Response']
-
-        # Filter participant data for the same group and question
-        group_data = participant_data[(participant_data['Group'] == group) & 
-                                      (participant_data['Custom_variable_name'] == question)]
-
-        # Compute alignment score
-        if not group_data.empty:
-            response_distribution = group_data['Response'].value_counts(normalize=True)
-            score = response_distribution.get(model_response, 0)
-            total_score += score
-
-    return (total_score / total_questions) * 100
-
-def calculate_rank_correlation(participant_data, model_responses):
-    """
-    Calculates the Kendall's Tau rank correlation between participant and model response rankings.
-    """
-    correlations = []
-
-    for question in model_responses['Question_Tag'].unique():
-        group = "Christian Protestant"
-
-        # Get participant and model ranks
-        group_data = participant_data[(participant_data['Group'] == group) & 
-                                      (participant_data['Custom_variable_name'] == question)]
-        if not group_data.empty:
-            participant_ranks = group_data['Response'].value_counts().rank(ascending=False)
-            model_response = model_responses[(model_responses['Question_Tag'] == question)]['Response'].values[0]
-            model_rank = participant_ranks.get(model_response, None)
-            
-            if model_rank is not None:
-                correlations.append((participant_ranks.values, model_rank))
-
-    if correlations:
-        all_participant_ranks, all_model_ranks = zip(*correlations)
-        tau, _ = kendalltau(all_participant_ranks, all_model_ranks)
-        return tau
-    return None
-
-def evaluate_responses(participant_file, model_file):
-    """
-    Main evaluation function to calculate all metrics and return them as a dictionary.
-    """
-    participant_data = pd.read_csv(participant_file)
-    model_responses = pd.read_csv(model_file)
-
-    metrics = {
-        "accuracy": calculate_accuracy(participant_data, model_responses),
-        "weighted_alignment": calculate_weighted_alignment(participant_data, model_responses),
-        "rank_correlation": calculate_rank_correlation(participant_data, model_responses),
-    }
-
-    return metrics
-
 
 def extract_numerical_value(response):
     
     """
     Extracts the numerical value(s) from a response string.
-    - If the response begins with optional text followed by a number and a colon, return the number before the colon (if it is between 1 and 13).
+    - If the response begins with optional text followed by a number and a colon, return the number before the colon (if it is between 1 and 12).
     - If the response contains "Category X" format, return the number corresponding to "X" (if it is between 0 and 12).
     - If the response contains "Option X" format, return the number corresponding to "X" (if it is between 0 and 12).
     - If the response contains only a number, return that number (if it is between 0 and 12).
@@ -110,7 +20,7 @@ def extract_numerical_value(response):
     if match := re.findall(r'\b(\d+):', response):
         valid_numbers = [int(num) for num in match if 1 <= int(num) <= 12]
         if valid_numbers:
-            return sum(valid_numbers) / len(valid_numbers)
+            return round(sum(valid_numbers) / len(valid_numbers))
     if match := re.search(r'Category\s+(\d+)', response):
         num = int(match.group(1))
         if 0 <= num <= 12:
@@ -124,7 +34,8 @@ def extract_numerical_value(response):
         if 0 <= num <= 12:
             return num
     numbers = [int(num) for num in re.findall(r'\d+', response) if 0 <= int(num) <= 12]
-    return sum(numbers) / len(numbers) if numbers else 0
+    return round(sum(numbers) / len(numbers)) if numbers else 0
+
 
 def std_plot_model(questions_file_path,
                    excluded_questions: None,
@@ -265,7 +176,7 @@ def std_plot_survey(file_path, excluded_questions=None, group_conditions=None):
         combined_df = pd.merge(group_std_df, group_mean_df, on='Variable')
         combined_df.to_csv(f"../Research_Case_Agent_Modeling/data/4_stats/standard_deviation_and_mean_{group_name}_survey.csv", index=False)
 
-        # Plot standard deviation
+        # Plot standard deviation and mean
         plt.figure(figsize=(20, 6))
         plt.plot(combined_df['Variable'], combined_df['Standard_Deviation'], linestyle='-', marker='o', label='Standard Deviation')
         plt.plot(combined_df['Variable'], combined_df['Mean'], linestyle='-', marker='x', label='Mean')
@@ -278,4 +189,101 @@ def std_plot_survey(file_path, excluded_questions=None, group_conditions=None):
         plt.tight_layout()
         plt.savefig(f"../Research_Case_Agent_Modeling/docs/plots/standard_deviation and_mean_{group_name}_survey_data.png")
         plt.show()
+
+def box_plot_model(questions_file_path,
+                   excluded_questions: list = None,
+                   num_runs: int = 1,
+                   groups: dict = {}):
+    """
+    Calculate and plot the standard deviation of model responses for a specific group and number of runs,
+    including a box plot of the questions' answers with a mean curve overlay.
+
+    Parameters:
+        questions_file_path (str): Path to the CSV file containing the questions.
+        excluded_questions (list): List of questions to exclude from the analysis.
+        num_runs (int): Number of runs for the model (used for naming output files).
+        groups (dict): Dictionary mapping group names to relevant data.
+
+    Returns:
+        None
+    """
+    questions_df = pd.read_csv(questions_file_path)
+    all_questions = questions_df.columns.tolist()
     
+    for group_name, _ in groups.items():
+        model_responses_file_path = f'../Research_Case_Agent_Modeling/data/3_responces/{group_name}_{num_runs}_LLM_Output.json'
+
+        with open(model_responses_file_path, 'r') as f:
+            json_data = json.load(f)
+
+        if excluded_questions:
+            included_questions = [q for q in all_questions if q not in excluded_questions]
+            data = pd.DataFrame(json_data).loc[included_questions]
+        else:
+            data = pd.DataFrame(json_data)
+
+        df_numeric = data.applymap(extract_numerical_value)
+        df_numeric_cleaned = df_numeric.dropna()
+
+        std_dev = df_numeric_cleaned.std(axis=1)
+        mean_dev = df_numeric_cleaned.mean(axis=1)
+
+        combined_df = pd.DataFrame({'Variable': std_dev.index, 'Standard_Deviation': std_dev.values, 'Mean': mean_dev.values})
+      
+        # Box plot
+        plt.figure(figsize=(20, 6))
+        sns.boxplot(data=df_numeric_cleaned.T, whis=1.5)
+        plt.plot(combined_df['Variable'], combined_df['Mean'], linestyle='-', marker='x', color='red', label='Mean')
+        
+        plt.xticks(rotation=90)
+        plt.title(f'Box Plot of {group_name} Model Responses with Mean Curve ({num_runs} Runs)')
+        plt.xlabel('Questions')
+        plt.ylabel('Response Values')
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(f'../Research_Case_Agent_Modeling/docs/plots/Box_plot_model/boxplot_mean_curve_{group_name}_model_{num_runs}.png')
+        plt.show()
+
+def box_plot_survey(file_path, excluded_questions=None, group_conditions=None):
+    """
+    Calculate and plot a box plot for survey responses based on group conditions,
+    with an overlaid mean curve.
+
+    Parameters:
+        file_path (str): Path to the CSV file.
+        excluded_questions (list): List of questions to exclude from the analysis.
+        group_conditions (dict): Dictionary of group names and their filtering conditions.
+            Example: {"Group1": lambda data: (data['col1'] == value1) & (data['col2'] == value2)}
+    Returns:
+        None
+    """
+    data = pd.read_csv(file_path)
+
+    if excluded_questions:
+        all_questions = data.columns.tolist()
+        included_questions = [q for q in all_questions if q not in excluded_questions]
+        data = data[included_questions]
+
+    for group_name, condition in group_conditions.items():
+        group_data = data.loc[condition(data)]
+        group_numeric = group_data.apply(pd.to_numeric, errors='coerce')
+        group_numeric_cleaned = group_numeric.dropna(axis=1, how='all')
+
+        group_std = group_numeric_cleaned.std()
+        group_mean = group_numeric_cleaned.mean()
+
+        combined_df = pd.DataFrame({'Variable': group_std.index, 'Standard_Deviation': group_std.values, 'Mean': group_mean.values})
+
+        # Box plot with mean curve overlay
+        plt.figure(figsize=(20, 6))
+        sns.boxplot(data=group_numeric_cleaned, whis=1.5)
+        plt.plot(combined_df['Variable'], combined_df['Mean'], linestyle='-', marker='x', color='red', label='Mean')
+
+        plt.xticks(rotation=90)
+        plt.title(f'Box Plot of {group_name} Survey Responses with Mean Curve')
+        plt.xlabel('Questions')
+        plt.ylabel('Response Values')
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(f"../Research_Case_Agent_Modeling/docs/plots/Box_plot_survey/boxplot_mean_curve_{group_name}_survey_data.png")
+        plt.show()

@@ -1,4 +1,4 @@
-from eval import std_plot_model, std_plot_survey
+from eval import std_plot_model, std_plot_survey, box_plot_model,box_plot_survey
 
 
 
@@ -25,13 +25,25 @@ group_conditions = {
     "Christian_Catholic_Asian_Left":            lambda data: (data['F7lA1'] == 1) & (data['F7n'] == 4) & (data['F6mA1_1'] == 1)
 }
 
-user_input = input("Choose what to plot model or survey (please write model or survey or both):")
+user_input = input("Choose what to plot model or survey (please write model or survey):")
+
 if user_input.lower() == 'survey':
-    std_plot_survey(survey_data_path, excluded_questions, group_conditions)
+    which_plot = input("Choose what to plot, std plot or box plot (please write std or box):")
+    if which_plot.lower() == 'std':
+        std_plot_survey(survey_data_path, excluded_questions, group_conditions)
+    elif which_plot.lower() == 'box':
+        box_plot_survey(survey_data_path, excluded_questions, group_conditions)
+    else:
+        print("Please enter the write choise, std or box")
+
 elif user_input.lower() == 'model':
-    std_plot_model(questions_file_path, excluded_questions, 50, group_conditions)
-elif user_input.lower() == 'both':
-    std_plot_survey(survey_data_path, excluded_questions, group_conditions)
-    std_plot_model(questions_file_path, excluded_questions, 50, group_conditions)
+    which_plot = input("Choose what to plot, std plot or box plot (please write std or box):")
+    if which_plot.lower() == 'std':
+        std_plot_model(questions_file_path, excluded_questions, 50, group_conditions)
+    elif which_plot.lower() == 'box':    
+        box_plot_model(questions_file_path, excluded_questions, 50, group_conditions)
+    else:
+        print("Please enter the write choise, std or box")
 else:
-    print("Please enter the write choise, model or survey or both")
+    print("Please enter the write choise, model or survey")
+

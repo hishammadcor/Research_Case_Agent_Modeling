@@ -1,54 +1,67 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
-def error_analysis_and_plot(reference_file_path, comparison_file_paths, output_plot_path):
+def error_analysis_and_plot(groups: list):
     """
-    Perform error analysis by calculating the difference in standard deviations between the reference file
+    Perform error analysis by calculating the difference in standard deviations and mean between the survey file
     and comparison files for each column and plot the results.
 
     Parameters:
-        reference_file_path (str): Path to the reference CSV file containing standard deviations.
-        comparison_file_paths (list of str): List of paths to comparison CSV files.
-        output_plot_path (str): Path to save the generated plot.
+        groups (list): List of group names to analyze.
 
     Returns:
         None
     """
-    reference_data = pd.read_csv(reference_file_path)
 
-    differences = pd.DataFrame()
-    differences['Variable'] = reference_data['Variable']
+    for group in groups:
+        reference_file_path = f'../Research_Case_Agent_Modeling/data/4_stats/std_mean_survey/standard_deviation_and_mean_{group}_survey.csv'
+        comparison_file_path = f'../Research_Case_Agent_Modeling/data/4_stats/std_mean_model/standard_deviation_mean_{group}_model_50.csv'
 
-    for file_path in comparison_file_paths:
-        comparison_data = pd.read_csv(file_path)
+        if not os.path.exists(reference_file_path):
+            print(f"Error: Missing reference file: {reference_file_path}")
+            continue
+        if not os.path.exists(comparison_file_path):
+            print(f"Error: Missing comparison file: {comparison_file_path}")
+            continue
 
-        # Ensure column alignment
-        if not all(reference_data['Variable'] == comparison_data['Variable']):
-            raise ValueError("Variable names do not match between reference and comparison files.")
+        reference_data = pd.read_csv(reference_file_path)
+        comparison_data = pd.read_csv(comparison_file_path)
 
-        file_name = file_path.split('/')[-1]
-        differences[file_name] = reference_data['Standard_Deviation'] - comparison_data['Standard_Deviation']
+        if not reference_data['Variable'].equals(comparison_data['Variable']):
+            raise ValueError(f"Variable names do not match between reference and comparison files for {group}.")
 
-    # Plot the differences
-    plt.figure(figsize=(20, 6))
-    for col in differences.columns[1:]:
-        plt.plot(differences['Variable'], differences[col], label=col)
+        std_differences = pd.DataFrame({'Variable': reference_data['Variable']})
+        mean_differences = pd.DataFrame({'Variable': reference_data['Variable']})
 
-    plt.title('Error Analysis: Differences in Standard Deviations')
-    plt.xlabel('Variables')
-    plt.ylabel('Difference in StdDev')
-    plt.xticks(rotation=90)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(output_plot_path)
-    plt.show()
+        std_differences[group] = reference_data['Standard_Deviation'] - comparison_data['Standard_Deviation']
+        mean_differences[group] = reference_data['Mean'] - comparison_data['Mean']
 
-# Example usage
-reference_file = '../Research_Case_Agent_Modeling/data/4_stats/standard_deviation_survey_responces.csv'
-comparison_files = [
-    '../Research_Case_Agent_Modeling/data/4_stats/standard_deviation_Orthodox_Christian_survey.csv',
-    '../Research_Case_Agent_Modeling/data/4_stats/standard_deviation_Orthodox_Christian_Hawaiian_survey.csv'
+        output_plot_path = f'../Research_Case_Agent_Modeling/docs/plots/std_mean_diff/standard_deviation_and_mean_differences_{group}.png'
+
+        # Plot differences
+        plt.figure(figsize=(20, 6))
+        for col in std_differences.columns[1:]:
+            plt.plot(std_differences['Variable'], std_differences[col], linestyle='-', marker='o', label=f'Std Diff - {col}')
+
+        for col in mean_differences.columns[1:]:
+            plt.plot(mean_differences['Variable'], mean_differences[col], linestyle='--', marker='x', label=f'Mean Diff - {col}')
+
+        plt.title(f'Differences between Standard Deviation and Mean for {group}')
+        plt.xlabel('Variables')
+        plt.ylabel('Differences')
+        plt.xticks(rotation=90)
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(output_plot_path)
+        plt.show()
+
+groups = [
+    "Christian_Catholic", "Christian_Protestant", "Jewish", "Orthodox_Christian",
+    "Jewish_White", "Christian_Protestant_Asian", "Christian_Protestant_Hawaiian",
+    "Orthodox_Christian_Hawaiian", "Christian_Catholic_Asian", "Jewish_White_Right",
+    "Christian_Protestant_Asian_Left", "Christian_Protestant_Hawaiian_Centrist",
+    "Orthodox_Christian_Hawaiian_Centrist", "Christian_Catholic_Asian_Left"
 ]
-output_plot = '../Research_Case_Agent_Modeling/docs/plots/standard_deviation_error_analysis.png'
 
-error_analysis_and_plot(reference_file, comparison_files, output_plot)
+error_analysis_and_plot(groups)
