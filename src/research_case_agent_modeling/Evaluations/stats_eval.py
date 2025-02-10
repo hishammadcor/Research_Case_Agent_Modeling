@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import numpy as np
 from scipy.stats import chisquare, spearmanr
-from eval import extract_numerical_value
+from eval_main import extract_numerical_value
 
 
 survey_file = "../Research_Case_Agent_Modeling/data/1_combined_preprocess/9_processed_data_for_personas_Format_1.csv"
