@@ -6,4 +6,4 @@
 # IPython
 profile_default/
 ipython_config.py
-data/1_preprocess/8_df_dataset_with_codebook_columns_filtered_hotencoding.csv
+data/1_combined_preprocess/8_df_dataset_with_codebook_columns_filtered_hotencoding.csv
