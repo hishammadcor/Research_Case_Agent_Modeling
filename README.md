@@ -1,3 +1,19 @@
+# 🧠 Project Title: **LLM Persona-Based Survey Simulation and Evaluation**
+
+## 📘 Introduction
+
+This repository contains a modular Python framework for evaluating how large language models (LLMs) respond to survey questions when prompted as specific personas. The core idea is to simulate group-based responses by prompting the LLM with persona-specific instructions (e.g., “Christian Protestant,” “Jewish White with Bachelor”) and compare the results against real survey data.
+
+Key components of the system include:
+
+- 🧩 **Prompt generation** from structured CSV survey definitions.
+- 🧠 **Persona injection** using customized JSON configurations.
+- 🛠️ **LLM API integration** for automated response generation.
+- 📊 **Evaluation toolkit** to analyze differences across groups using statistical measures like Chi-Square, JS Divergence, Spearman/Kendall correlations, and visualizations.
+
+This setup enables detailed insights into how aligned model outputs are with real human data, especially across diverse sociocultural and demographic groups.
+
+
 ## Development Environment Preparation
 
 ### Pyenv
