@@ -119,11 +119,29 @@ def evaluate_responses():
     "Christian_Protestant_Asian_Left":          lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 4) & (data['F6mA1_1'] == 1),
     "Christian_Protestant_Hawaiian_Centrist":   lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 8) & (data['F6mA1_1'] == 6),
     "Orthodox_Christian_Hawaiian_Centrist":     lambda data: (data['F7lA1'] == 3) & (data['F7n'] == 8) & (data['F6mA1_1'] == 6),
-    "Christian_Catholic_Asian_Left":            lambda data: (data['F7lA1'] == 1) & (data['F7n'] == 4) & (data['F6mA1_1'] == 1)
-}
+    "Christian_Catholic_Asian_Left":            lambda data: (data['F7lA1'] == 1) & (data['F7n'] == 4) & (data['F6mA1_1'] == 1),
+    "Jewish_White_50k_to_70k":                  lambda data: (data['F7lA1'] == 4) & (data['F7n'] == 1) & (data['einkommen'] == 4),
+    "Christian_Protestant_Asian_50k_to_70k":    lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 4) & (data['einkommen'] == 4),
+    "Christian_Protestant_Hawaiian_25k_to_49k": lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 8) & (data['einkommen'] == 3),
+    "Orthodox_Christian_Hawaiian_25k_to_49k":   lambda data: (data['F7lA1'] == 3) & (data['F7n'] == 8) & (data['einkommen'] == 3),
+    "Christian_Catholic_Asian_50k_to_70k":      lambda data: (data['F7lA1'] == 1) & (data['F7n'] == 4) & (data['einkommen'] == 4),
+    "Christian_Protestant_Hispanic_Latino_50k_to_70k":lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 2) & (data['einkommen'] == 4),
+    "Christian_Protestant_Hispanic_Latino_25k_to_49k":lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 2) & (data['einkommen'] == 3),
+    "Jewish_White_with_Bachelor":               lambda data: (data['F7lA1'] == 4) & (data['F7n'] == 1) & (data['F7g'] == 7),
+    "Christian_Protestant_Asian_with_Bachelor": lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 4) & (data['F7g'] == 7),
+    "Christian_Protestant_Hawaiian_with_Upper_Secondary":lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 8) & (data['F7g'] == 4),
+    "Orthodox_Christian_Hawaiian_with_Upper_Secondary":lambda data: (data['F7lA1'] == 3) & (data['F7n'] == 8) & (data['F7g'] == 4),
+"Christian_Catholic_Asian_with_Bachelor":       lambda data: (data['F7lA1'] == 1) & (data['F7n'] == 4) & (data['F7g'] == 7),
+    "Christian_Protestant_Hispanic_Latino_with_Bachelor":lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 2) & (data['F7g'] == 7),
+    "Jewish_White_with_Full-Time_Job":          lambda data: (data['F7lA1'] == 4) & (data['F7n'] == 1) & (data['F7h'] == 1),
+    "Christian_Protestant_Hawaiian_Unemployed": lambda data: (data['F7lA1'] == 2) & (data['F7n'] == 8) & (data['F7h'] == 7),
+    "Orthodox_Christian_Hawaiian_Unemployed":   lambda data: (data['F7lA1'] == 3) & (data['F7n'] == 8) & (data['F7h'] == 7)
+
+    }
+
     survey_file = "../Research_Case_Agent_Modeling/data/1_combined_preprocess/9_processed_data_for_personas_Format_1.csv"
     
-    excluded_questions = ['F2', 'F7cA1', 'F7c', 'F7cA1', 'F7jA1', 'F7kA1', 'F7a', 'F6a_RepPartyA2', 'F6a_DemPartyA2', 'F6b_RepPartyA2', 'F6b_DemPartyA2','F6b_DemPartyA1', 'F6b_RepPartyA1', 'F7i']
+    excluded_questions = ['F2', 'F7cA1', 'F7c', 'F7cA1', 'F7jA1', 'F7kA1', 'F7a', 'F6a_RepPartyA2', 'F6a_DemPartyA2', 'F6b_RepPartyA2', 'F6b_DemPartyA2','F6b_DemPartyA1', 'F6b_RepPartyA1', 'F7i', 'F3B1', 'F3B2', 'F3B3', 'F3_USA', 'F3_CHINA', 'F3_Deutschland', 'F3_Russland', 'F3_Ukraine', 'F3_EU', 'F3_NATO']
 
     survey_data = pd.read_csv(survey_file)
     all_questions = survey_data.columns.tolist()
@@ -131,7 +149,7 @@ def evaluate_responses():
     metrics_list = []
     
     for group, condition in group_conditions.items():
-        llm_file = f"../Research_Case_Agent_Modeling/data/3_responces/{group}_50_LLM_Output.json"
+        llm_file = f"../Research_Case_Agent_Modeling/data/3_responces/3_responses_llama_3-1_8b/{group}_50_LLM_Output.json"
         
         with open(llm_file, "r") as file:
             llm_data = json.load(file)
@@ -163,7 +181,7 @@ def evaluate_responses():
             "kendall tau Rank Correlation": rank_correlation
         })
 
-    output_file = '../Research_Case_Agent_Modeling/data/4_stats/all_metrics.csv'
+    output_file = '../Research_Case_Agent_Modeling/data/4_stats/all_metrics_2.csv'
     # Save metrics to a CSV file
     metrics_df = pd.DataFrame(metrics_list)
     metrics_df.to_csv(output_file, index=False)

@@ -62,7 +62,7 @@ def std_plot_model(questions_file_path,
     
     for group_name,__ in groups.items():
 
-        model_responces_file_path = f'../Research_Case_Agent_Modeling/data/3_responces/{group_name}_{num_runs}_LLM_Output.json'
+        model_responces_file_path = f'../Research_Case_Agent_Modeling/data/3_responces/3_responses_llama_3-1_8b/{group_name}_{num_runs}_LLM_Output.json'
 
         with open(model_responces_file_path, 'r') as f:
                 json_data = json.load(f)
@@ -98,11 +98,11 @@ def std_plot_model(questions_file_path,
         # Visualize the standard deviations and Mean
         plt.figure(figsize=(20, 6))
         plt.plot(combined_df['Variable'], combined_df['Standard_Deviation'], linestyle='-', marker='o', label='Standard Deviation')
-        plt.plot(combined_df['Variable'], combined_df['Mean'], linestyle='-', marker='x', label='Mean')
+        # plt.plot(combined_df['Variable'], combined_df['Mean'], linestyle='-', marker='x', label='Mean')
 
         plt.xticks(rotation=90) 
 
-        plt.title(f'Standard Deviation and Mean of {group_name} Model Responses {num_runs} Runs')
+        plt.title(f'Standard Deviation of {group_name} Model Responses {num_runs} Runs')
 
         plt.xlabel('Questions')
         plt.ylabel('Values')
@@ -179,15 +179,15 @@ def std_plot_survey(file_path, excluded_questions=None, group_conditions=None):
         # Plot standard deviation and mean
         plt.figure(figsize=(20, 6))
         plt.plot(combined_df['Variable'], combined_df['Standard_Deviation'], linestyle='-', marker='o', label='Standard Deviation')
-        plt.plot(combined_df['Variable'], combined_df['Mean'], linestyle='-', marker='x', label='Mean')
+        # plt.plot(combined_df['Variable'], combined_df['Mean'], linestyle='-', marker='x', label='Mean')
 
         plt.xticks(rotation=90)
-        plt.title(f'Standard Deviation and Mean for {group_name} Survey Data')
+        plt.title(f'Standard Deviation for {group_name} Survey Data')
         plt.xlabel('Questions')
         plt.ylabel('Values')
         plt.legend()
         plt.tight_layout()
-        plt.savefig(f"../Research_Case_Agent_Modeling/docs/plots/standard_deviation and_mean_{group_name}_survey_data.png")
+        plt.savefig(f"../Research_Case_Agent_Modeling/docs/plots/standard_deviation_{group_name}_survey_data.png")
         plt.show()
 
 def box_plot_model(questions_file_path,

@@ -15,8 +15,8 @@ def error_analysis_and_plot(groups: list, mean: False):
     """
 
     for group in groups:
-        reference_file_path = f'../Research_Case_Agent_Modeling/data/4_stats/std_mean_survey/standard_deviation_and_mean_{group}_survey.csv'
-        comparison_file_path = f'../Research_Case_Agent_Modeling/data/4_stats/std_mean_model/standard_deviation_mean_{group}_model_50.csv'
+        reference_file_path = f'../Research_Case_Agent_Modeling/data/4_stats/std_survey/standard_deviation_and_mean_{group}_survey.csv'
+        comparison_file_path = f'../Research_Case_Agent_Modeling/data/4_stats/std_3.1_8b_model/standard_deviation_mean_{group}_model_50.csv'
 
         if not os.path.exists(reference_file_path):
             print(f"Error: Missing reference file: {reference_file_path}")
@@ -80,7 +80,7 @@ groups = [
     "Jewish_White", "Christian_Protestant_Asian", "Christian_Protestant_Hawaiian",
     "Orthodox_Christian_Hawaiian", "Christian_Catholic_Asian", "Jewish_White_Right",
     "Christian_Protestant_Asian_Left", "Christian_Protestant_Hawaiian_Centrist",
-    "Orthodox_Christian_Hawaiian_Centrist", "Christian_Catholic_Asian_Left"
+    "Orthodox_Christian_Hawaiian_Centrist", 'Christian_Catholic_Asian_Left', 'Jewish_White_50k_to_70k', 'Christian_Protestant_Asian_50k_to_70k', 'Christian_Protestant_Hawaiian_25k_to_49k', 'Orthodox_Christian_Hawaiian_25k_to_49k', 'Christian_Catholic_Asian_50k_to_70k', 'Christian_Protestant_Hispanic_Latino_50k_to_70k', 'Christian_Protestant_Hispanic_Latino_25k_to_49k', 'Jewish_White_with_Bachelor', 'Christian_Protestant_Asian_with_Bachelor', 'Christian_Protestant_Hawaiian_with_Upper_Secondary', 'Orthodox_Christian_Hawaiian_with_Upper_Secondary', 'Christian_Catholic_Asian_with_Bachelor', 'Christian_Protestant_Hispanic_Latino_with_Bachelor', 'Jewish_White_with_Full-Time_Job', 'Christian_Protestant_Hawaiian_Unemployed', 'Orthodox_Christian_Hawaiian_Unemployed'
 ]
 
 error_analysis_and_plot(groups, False)
